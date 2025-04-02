@@ -1,18 +1,72 @@
 version: "3.8"
 
 services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    hostname: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        sleep 3;
+        mc alias set local http://minio:9000 ${S3_ACCESS_KEY} ${S3_SECRET_KEY};
+        mc mb -p local/${S3_BUCKET_NAME} || true;
+        mc policy set public local/${S3_BUCKET_NAME};
+        exit 0;
+      "
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+
   app:
     build: .
+    container_name: app
     ports:
       - "3000:3000"
     volumes:
       - ./uploads:/app/uploads
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
       - SERVER_URL=${SERVER_URL}
-      - UPLOAD_DIR=${UPLOAD_DIR}
       - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB}
       - ALLOWED_FILE_TYPES=${ALLOWED_FILE_TYPES}
+      - STORAGE_TYPE=${STORAGE_TYPE}
+      - UPLOAD_DIR=${UPLOAD_DIR}
       - DEFAULT_TTL_IN_SECONDS=${DEFAULT_TTL_IN_SECONDS}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_REGION=${S3_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_FORCE_PATH_STYLE=true
+    depends_on:
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_started
     restart: unless-stopped
+
+volumes:
+  minio_data:

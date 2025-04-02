@@ -13,11 +13,21 @@ interface IConfig {
     maxFileSizeMB: number;
     allowedFileTypes: string[];
     uploadDir: string;
-    allowedFileExtensions: string[]; 
+    allowedFileExtensions: string[];
   };
   cache: {
-    defaultTTLInSeconds: number
-  }
+    defaultTTLInSeconds: number;
+  };
+  storage: {
+    type: 'local' | 's3';
+  };
+  s3: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    region: string;
+    bucketName: string;
+    endpoint: string;
+  };
 }
 
 const env = process.env.NODE_ENV === 'production' ? 'production' : 'development';
@@ -38,9 +48,19 @@ const config: IConfig = {
     uploadDir: process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads'),
     allowedFileExtensions: ['jpg', 'jpeg', 'png', 'webp']
   },
-  cache:{
-    defaultTTLInSeconds:  parseInt(process.env.DEFAULT_TTL_IN_SECONDS || '60', 10),
-  }
+  cache: {
+    defaultTTLInSeconds: parseInt(process.env.DEFAULT_TTL_IN_SECONDS || '60', 10),
+  },
+  storage: {
+    type: process.env.STORAGE_TYPE === 's3' ? 's3' : 'local',
+  },
+  s3: {
+    accessKeyId: process.env.S3_ACCESS_KEY || '',
+    secretAccessKey: process.env.S3_SECRET_KEY || '',
+    region: process.env.S3_REGION || 'us-east-1',
+    bucketName: process.env.S3_BUCKET_NAME || '',
+    endpoint: process.env.S3_ENDPOINT || "",
+  },
 };
 
 export default config;
