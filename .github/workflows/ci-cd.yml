@@ -1,0 +1,41 @@
+name: Node.js CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v3
+      with:
+        node-version: 22
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Run unit tests
+      run: npm test
+
+    - name: Run integration tests
+      run: npm run test:integration
+      env:
+        NODE_ENV: ${{ vars.NODE_ENV }}
+        PORT: ${{ vars.PORT }}
+        SERVER_URL: ${{ vars.SERVER_URL }}
+        MAX_FILE_SIZE_MB: ${{ vars.MAX_FILE_SIZE_MB }}
+        ALLOWED_FILE_TYPES: ${{ vars.ALLOWED_FILE_TYPES }}
+        UPLOAD_DIR: ${{ vars.UPLOAD_DIR }}
+        DEFAULT_TTL_IN_SECONDS: ${{ vars.DEFAULT_TTL_IN_SECONDS }}
