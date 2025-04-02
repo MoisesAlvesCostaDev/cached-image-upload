@@ -42,6 +42,3 @@ Thumbs.db
 *.tsbuildinfo
 
 /config/local
-
-package-lock.json
-yarn.lock
