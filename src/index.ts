@@ -1,6 +1,11 @@
-const express = require('express')
-const app = express()
-const port = 3000
+import config from './config';
+import { createServer } from './config/server';
 
-app.get('/', (req: Request, res: Response) => res.send('ok'))
-app.listen(port, () => console.log(`Listening on port ${port}!`))
+const app = createServer();
+
+app.listen(config.server.port, () => {
+  console.log(`Server running in ${config.env} mode on ${config.server.url}`);
+}).on('error', (err) => {
+  console.error('Server failed to start:', err);
+  process.exit(1);
+});
