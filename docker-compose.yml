@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - NODE_ENV=development
+      - PORT=${PORT}
+      - SERVER_URL=${SERVER_URL}
+      - UPLOAD_DIR=${UPLOAD_DIR}
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB}
+      - ALLOWED_FILE_TYPES=${ALLOWED_FILE_TYPES}
+      - DEFAULT_TTL_IN_SECONDS=${DEFAULT_TTL_IN_SECONDS}
+    restart: unless-stopped
