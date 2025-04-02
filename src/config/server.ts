@@ -2,6 +2,7 @@ import cors from 'cors';
 import express, { Express } from 'express';
 import helmet from 'helmet';
 import { healthRouter } from '../routes/health.routes';
+import { imageRouter } from '../routes/image.routes';
 import config from './index';
 
 export const createServer = (): Express => {
@@ -23,6 +24,7 @@ export const createServer = (): Express => {
 
   app.use('/health', healthRouter); 
   
+  app.use('/', imageRouter);
   
 
   

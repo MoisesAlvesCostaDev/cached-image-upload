@@ -3,7 +3,7 @@ import path from 'path';
 
 dotenv.config();
 
-interface Config {
+interface IConfig {
   env: 'development' | 'production';
   server: {
     port: number;
@@ -18,7 +18,7 @@ interface Config {
 
 const env = process.env.NODE_ENV === 'production' ? 'production' : 'development';
 
-const config: Config = {
+const config: IConfig = {
   env,
   server: {
     port: parseInt(process.env.PORT || '3000', 10),
