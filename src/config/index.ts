@@ -13,7 +13,11 @@ interface IConfig {
     maxFileSizeMB: number;
     allowedFileTypes: string[];
     uploadDir: string;
+    allowedFileExtensions: string[]; 
   };
+  cache: {
+    defaultTTLInSeconds: number
+  }
 }
 
 const env = process.env.NODE_ENV === 'production' ? 'production' : 'development';
@@ -32,7 +36,11 @@ const config: IConfig = {
       'image/webp',
     ],
     uploadDir: process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads'),
+    allowedFileExtensions: ['jpg', 'jpeg', 'png', 'webp']
   },
+  cache:{
+    defaultTTLInSeconds:  parseInt(process.env.DEFAULT_TTL_IN_SECONDS || '60', 10),
+  }
 };
 
 export default config;
