@@ -63,13 +63,6 @@ cd cached-image-upload
 npm install
 ```
 
-## Docker
-
-```bash
-docker-compose build
-docker-compose up -d
-```
-
 Se preferir utilizar s3 e subir apenas Minio
 
 ```bash
@@ -82,9 +75,22 @@ docker-compose up -d minio
 npm run dev
 ```
 
+ou
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
 ## Testes
 
 ```bash
 npm run test:unit           # Testes unitários
 npm run test:integration    # Testes de integração
+```
+
+## Docker build
+
+```bash
+docker-compose build
+docker-compose up -d
 ```
