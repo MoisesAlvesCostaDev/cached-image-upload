@@ -4,6 +4,10 @@ Este projeto é um serviço em Node.js/TypeScript para upload, processamento e c
 O projeto permite fazer upload de imagens (com tamanho máximo configurado), renomear processar(redimensionamento e compressão via Sharp) e armazenar localmente ou em no S3. Além disso, a aplicação utiliza cache (com Node-Cache) para acelerar o acesso às imagens. Infra estrutura com docker e workflow para git.  
 Obs. No teste foi solicitado um retorno 204(no content) para sucesso no upload porem optei por retornar 200 e um body com o nome da imagem renomeado utilizado uuid garantindo um nome único no storage.
 
+## Melhorias futuras
+
+Migrar o cache para algum serviço e implementar clustering
+
 ## Funcionalidades
 
 - Endpoint `POST /upload/image` que aceita imagens via multipart/form-data com um tamanho máximo (ex.: 5 MB).
