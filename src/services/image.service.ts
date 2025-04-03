@@ -2,11 +2,11 @@ import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3
 import fs from "fs/promises";
 import path from "path";
 import sharp from "sharp";
-import config from "../config";
+import config from "../config"; // Ajuste o caminho conforme sua estrutura
 
 const uploadDir = path.join(__dirname, "../../", config.upload.uploadDir);
 
-async function ensureUploadDirExists(): Promise<void> {
+export async function ensureUploadDirExists(): Promise<void> {
   try {
     await fs.access(uploadDir);
   } catch {
@@ -40,7 +40,7 @@ export async function compressImage(
   return { buffer: compressedBuffer, extension };
 }
 
-async function saveImageLocal(
+export async function saveImageLocal(
   buffer: Buffer,
   filename: string
 ): Promise<void> {
@@ -49,19 +49,19 @@ async function saveImageLocal(
   await fs.writeFile(filePath, buffer);
 }
 
-async function getImageLocal(
+export async function getImageLocal(
   filename: string
 ): Promise<{ buffer: Buffer } | null> {
   try {
     const filePath = path.join(uploadDir, filename);
     const buffer = await fs.readFile(filePath);
     return { buffer };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
 
-const s3Client = new S3Client({
+export const s3Client = new S3Client({
   region: config.s3.region,
   endpoint: config.s3.endpoint,
   credentials: {
@@ -71,7 +71,7 @@ const s3Client = new S3Client({
   forcePathStyle: config.s3.endpoint ? true : false,
 });
 
-function getContentType(extension: string): string {
+export function getContentType(extension: string): string {
   switch (extension) {
     case "jpg":
     case "jpeg":
@@ -85,7 +85,7 @@ function getContentType(extension: string): string {
   }
 }
 
-async function saveImageS3(
+export async function saveImageS3(
   buffer: Buffer,
   filename: string
 ): Promise<void> {
@@ -96,14 +96,13 @@ async function saveImageS3(
     Key: filename,
     Body: buffer,
     ContentType: contentType,
-    ACL: 'public-read',
+    ACL: "public-read",
   });
-
 
   await s3Client.send(command);
 }
 
-async function getImageS3(
+export async function getImageS3(
   filename: string
 ): Promise<{ buffer: Buffer } | null> {
   try {
@@ -125,7 +124,7 @@ async function getImageS3(
 
     const buffer = await streamToBuffer(stream as NodeJS.ReadableStream);
     return { buffer };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
