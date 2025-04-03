@@ -45,7 +45,7 @@ const config: IConfig = {
       'image/png',
       'image/webp',
     ],
-    uploadDir: process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads'),
+    uploadDir: process.env.UPLOAD_DIR || path.resolve(__dirname, '../../uploads'),
     allowedFileExtensions: ['jpg', 'jpeg', 'png', 'webp']
   },
   cache: {
